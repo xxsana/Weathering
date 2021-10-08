@@ -42,12 +42,16 @@ class ViewController: UIViewController {
         
         cityTextField.text = ""
         cityTextField.resignFirstResponder()
+        
+        // set location label
+        self.locationLabel.text = city
     }
     
     
     // MARK: - Helpers
     func setDelegate() {
         cityTextField.delegate = self
+        manager.delegate = self
     }
     
     func setButtonImage() {
@@ -58,6 +62,12 @@ class ViewController: UIViewController {
         searchButton.setImage(sImage, for: .normal)
     }
 
+}
+
+extension ViewController: WeatherManagerDelegate {
+    func setWeather(weather: WeatherModel) {
+        temperatureLabel.text = "\(weather.current.temp)℃"
+    }
 }
 
 
@@ -74,6 +84,9 @@ extension ViewController: UITextFieldDelegate {
 
         textField.text = ""
         textField.resignFirstResponder()
+        
+        // set location label
+        self.locationLabel.text = city
         
         return true
     }
