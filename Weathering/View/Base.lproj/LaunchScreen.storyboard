@@ -3,6 +3,7 @@
     <device id="retina6_1" orientation="portrait" appearance="light"/>
     <dependencies>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="18093"/>
+        <capability name="Named colors" minToolsVersion="9.0"/>
         <capability name="Safe area layout guides" minToolsVersion="9.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
@@ -23,7 +24,7 @@
                             </label>
                         </subviews>
                         <viewLayoutGuide key="safeArea" id="6Tk-OE-BBY"/>
-                        <color key="backgroundColor" red="0.64705882349999999" green="0.74509803919999995" blue="0.81176470590000005" alpha="0.97945681939999996" colorSpace="custom" customColorSpace="sRGB"/>
+                        <color key="backgroundColor" name="LightSteelBlue"/>
                         <constraints>
                             <constraint firstItem="rXq-yL-JcI" firstAttribute="centerY" secondItem="Ze5-6b-2t3" secondAttribute="centerY" id="n4T-AR-fLV"/>
                             <constraint firstItem="rXq-yL-JcI" firstAttribute="centerX" secondItem="Ze5-6b-2t3" secondAttribute="centerX" id="vxU-Ja-5G4"/>
@@ -35,4 +36,9 @@
             <point key="canvasLocation" x="53" y="375"/>
         </scene>
     </scenes>
+    <resources>
+        <namedColor name="LightSteelBlue">
+            <color red="0.6470588235294118" green="0.74509803921568629" blue="0.81176470588235294" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+        </namedColor>
+    </resources>
 </document>

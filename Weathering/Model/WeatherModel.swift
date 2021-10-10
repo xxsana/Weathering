@@ -16,14 +16,17 @@ struct WeatherDetail {
     var temp: Double
     var conditionID: Int
     
+    // convert conditionID to SF Symbol title
     var condition: String {
         switch conditionID {
         case 200..<300:
             return "cloud.bolt"
         case 300..<400:
             return "cloud.drizzle"
-        case 500..<600:
+        case 500..<502:
             return "cloud.rain"
+        case 502..<600:
+            return "cloud.heavyrain"
         case 600..<700:
             return "cloud.snow"
         case 700...711:

@@ -14,11 +14,12 @@ class ViewController: UIViewController {
     @IBOutlet weak var searchButton: UIButton!
     @IBOutlet weak var cityTextField: UITextField!
     @IBOutlet weak var locationLabel: UILabel!
-    @IBOutlet weak var iconImageView: UIImageView!
+    @IBOutlet weak var conditionImageView: UIImageView!
     @IBOutlet weak var temperatureLabel: UILabel!
     @IBOutlet weak var hourlyTableView: UITableView!
     
     let manager = WeatherManager()
+    var hourly = [WeatherDetail]()
     
     
     // MARK: - LifeCycle
@@ -51,6 +52,8 @@ class ViewController: UIViewController {
     // MARK: - Helpers
     func setDelegate() {
         cityTextField.delegate = self
+        hourlyTableView.delegate = self
+        hourlyTableView.dataSource = self
         manager.delegate = self
     }
     
@@ -66,10 +69,36 @@ class ViewController: UIViewController {
 
 extension ViewController: WeatherManagerDelegate {
     func setWeather(weather: WeatherModel) {
+        
+        hourly = weather.hourly
+        
+        // current weather
         temperatureLabel.text = "\(weather.current.temp)℃"
+        conditionImageView.image = UIImage(systemName: weather.current.condition, withConfiguration: UIImage.SymbolConfiguration(pointSize: 120))
+        
+        // hourly weather
+        hourlyTableView.reloadData()
     }
 }
 
+extension ViewController: UITableViewDelegate, UITableViewDataSource {
+    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        // update after resizing
+        return hourly.count
+    }
+    
+    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        if let cell = tableView.dequeueReusableCell(withIdentifier: "HourlyTableViewCell", for: indexPath) as? HourlyTableViewCell {
+            let hour = indexPath.row + 1
+            cell.setWeather(index: hour, with: hourly[indexPath.row])
+            
+            return cell
+        }
+        return UITableViewCell()
+    }
+    
+    
+}
 
 extension ViewController: UITextFieldDelegate {
     

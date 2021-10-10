@@ -75,6 +75,7 @@ class WeatherManager {
 //            let current = decodedData.current
             let weather = setWeatherModel(data: decodedData)
             
+            // update UI in controller
             DispatchQueue.main.async {
                 self.delegate?.setWeather(weather: weather)
             }
@@ -111,18 +112,18 @@ class WeatherManager {
         
     }
     
-    
     // convert decoded data to model struct
     func setWeatherModel(data: WeatherData) -> WeatherModel {
         
-        let currentTemp = data.current.temp
+        let currentTemp = round(data.current.temp*100)/100
         let currentID = data.current.weather[0].id
         let current = WeatherDetail(temp: currentTemp, conditionID: currentID)
         
         var hourly = [WeatherDetail]()
         
-        for i in 0..<5 {
-            let hour = WeatherDetail(temp: data.hourly[i].temp, conditionID: data.hourly[i].weather[0].id)
+        for i in 0..<9 {
+            let temp = round(data.hourly[i].temp*100)/100
+            let hour = WeatherDetail(temp: temp, conditionID: data.hourly[i].weather[0].id)
             
             hourly.append(hour)
         }
