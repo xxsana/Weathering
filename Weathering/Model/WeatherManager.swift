@@ -23,28 +23,29 @@ class WeatherManager {
     func fetchData(_ city: String) {
         
         // get coordinate from city name by CoreLocation
-        let coordinate = getCoordinate(city)
-//        let lat = coordinate.latitude
-//        let lon = coordinate.longitude
-        
-        let lat = 35.1028
-        let lon = 129.0403
-        print("DEBUG: city: \(city)")
-        print("DEBUG: lat, lon in fetchData: \(lat), \(lon)")
-        
-        // set urlString
-        let http =
-            "https://api.openweathermap.org/data/2.5/onecall?lat=\(lat)&lon=\(lon)&exclude=minutely,daily&units=metric&appid=18a8b6952c0a12293ab5c0b4ccfcfbe3"
-        
-        let urlString = "\(http)&appid=\(key)"
-        
-        // Call current & hourly weather data from lan, lon
-        performRequest(urlString)
+        getCoordinate(city) { coordi in
+            let lat = coordi.latitude
+            let lon = coordi.longitude
+            
+//            print("DEBUG: city: \(city)")
+//            print("DEBUG: lat, lon in fetchData: \(lat), \(lon)")
+            
+            // set urlString
+            let http =
+                "https://api.openweathermap.org/data/2.5/onecall?lat=\(lat)&lon=\(lon)&exclude=minutely,daily&units=metric&appid=18a8b6952c0a12293ab5c0b4ccfcfbe3"
+            
+            let urlString = "\(http)&appid=\(self.key)"
+            
+//            print("DEBUG: urlString: \(urlString)")
+            // Call current & hourly weather data from lan, lon
+            self.performRequest(urlString)
+        }
     }
     
     
     // do dataTask with given url
     func performRequest(_ urlString: String) {
+//        print("DEBUG: urlStringin performRequest : \(urlString)")
         guard let url = URL(string: urlString) else {
             return
         }
@@ -54,9 +55,9 @@ class WeatherManager {
                 print("DEBUG: \(e.localizedDescription)")
                 return
             }
-            // successfully get data
+            // successfully gott data
             if let safeData = data {
-                print("DEBUG: successfully got data")
+//                print("DEBUG: successfully got data")
                 self.parseJSON(safeData)
             }
         }
@@ -69,7 +70,7 @@ class WeatherManager {
         let decoder = JSONDecoder()
         do {
             let decodedData = try decoder.decode(WeatherData.self, from: data)
-            print("DEBUG: Current weather: \(decodedData.current.temp)")
+//            print("DEBUG: Current weather: \(decodedData.current.temp)")
             
 //            let current = decodedData.current
             let weather = setWeatherModel(data: decodedData)
@@ -87,11 +88,11 @@ class WeatherManager {
     }
     
     // get coordinate information from city name
-    func getCoordinate(_ city: String) -> CLLocationCoordinate2D {
-        
+    func getCoordinate(_ city: String, completionTask: @escaping (_ coordi: CLLocationCoordinate2D) -> ()) -> Void {
+
         let geoCoder = CLGeocoder()
         var coordinate = CLLocationCoordinate2D()
-        
+
         geoCoder.geocodeAddressString(city) { (placemarks, error) in
             if let e = error {
                 print("DEBUG: error in getCoordinate")
@@ -102,10 +103,14 @@ class WeatherManager {
                let location = placemarks.first?.location {
                 coordinate.latitude = location.coordinate.latitude
                 coordinate.longitude = location.coordinate.longitude
+//                print("DEBUG: lat, lon in getCoordinate: \(coordinate.latitude), \(coordinate.longitude)")
+                
+                completionTask(coordinate)
             }
         }
-        return coordinate
+        
     }
+    
     
     // convert decoded data to model struct
     func setWeatherModel(data: WeatherData) -> WeatherModel {

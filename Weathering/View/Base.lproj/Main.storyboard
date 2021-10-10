@@ -34,8 +34,9 @@
                                     </button>
                                     <textField opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" placeholder="city" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="R1u-Ig-WUw">
                                         <rect key="frame" x="50" y="0.0" width="250" height="40"/>
+                                        <color key="backgroundColor" red="0.55448567492343515" green="0.63763217389691751" blue="0.69844640866674557" alpha="0.97945681939999996" colorSpace="custom" customColorSpace="sRGB"/>
                                         <fontDescription key="fontDescription" type="system" pointSize="19"/>
-                                        <textInputTraits key="textInputTraits"/>
+                                        <textInputTraits key="textInputTraits" autocapitalizationType="words" autocorrectionType="no" spellCheckingType="no" returnKeyType="search" textContentType="address-level2"/>
                                     </textField>
                                     <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="0Bm-Dy-aBU">
                                         <rect key="frame" x="310" y="0.0" width="40" height="40"/>
