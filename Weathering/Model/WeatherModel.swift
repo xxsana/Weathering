@@ -15,8 +15,9 @@ struct WeatherModel {
 struct WeatherDetail {
     var temp: Double
     var conditionID: Int
+    var time: Int = 0
     
-    // convert conditionID to SF Symbol title
+    // convert conditionID to SF Symbol image name
     var condition: String {
         switch conditionID {
         case 200..<300:

@@ -6,6 +6,7 @@
 //
 
 import UIKit
+import CoreLocation
 
 class ViewController: UIViewController {
     
@@ -13,12 +14,13 @@ class ViewController: UIViewController {
     @IBOutlet weak var currentButton: UIButton!
     @IBOutlet weak var searchButton: UIButton!
     @IBOutlet weak var cityTextField: UITextField!
-    @IBOutlet weak var locationLabel: UILabel!
+    @IBOutlet weak var cityLabel: UILabel!
     @IBOutlet weak var conditionImageView: UIImageView!
     @IBOutlet weak var temperatureLabel: UILabel!
     @IBOutlet weak var hourlyTableView: UITableView!
     
-    let manager = WeatherManager()
+    let weatherManager = WeatherManager()
+    let locationManager = CLLocationManager()
     var hourly = [WeatherDetail]()
     
     
@@ -31,30 +33,39 @@ class ViewController: UIViewController {
         
         setButtonImage()
         
+        getCurrentLocation()
     }
     
 
     // MARK: - IBActions
-    
+
+    // call when click search button
     @IBAction func searchClicked(_ sender: UIButton) {
-        guard let city = cityTextField.text else { print("DEBUG: no text in textfield"); return }
         
-        manager.fetchData(city)
-        
-        cityTextField.text = ""
-        cityTextField.resignFirstResponder()
-        
-        // set location label
-        self.locationLabel.text = city
+        if cityTextField.text?.isEmpty ?? true {
+            print("DEBUG: no text in textfield")
+        } else {
+            if let city = cityTextField.text {
+                self.fetchWeatherAndSet(with: city)
+                
+                cityTextField.text = ""
+                cityTextField.resignFirstResponder()
+            }
+        }
     }
     
+    // call when click current location button
+    @IBAction func currentLocationClicked(_ sender: Any) {
+        getCurrentLocation()
+    }
     
     // MARK: - Helpers
     func setDelegate() {
         cityTextField.delegate = self
         hourlyTableView.delegate = self
         hourlyTableView.dataSource = self
-        manager.delegate = self
+        weatherManager.delegate = self
+        locationManager.delegate = self
     }
     
     func setButtonImage() {
@@ -65,8 +76,25 @@ class ViewController: UIViewController {
         searchButton.setImage(sImage, for: .normal)
     }
 
+    func fetchWeatherAndSet(with city: String) {
+        // update label and fetch data
+        setCityLabel(as: city)
+        weatherManager.fetchData(in: city)
+    }
+    
+    func getCurrentLocation() {
+        // ask user using of gps
+        locationManager.requestWhenInUseAuthorization()
+        locationManager.requestLocation()
+    }
+    
+    // update location label
+    func setCityLabel(as city: String) {
+        self.cityLabel.text = city
+    }
 }
 
+// MARK: - delegate for WeatherManager
 extension ViewController: WeatherManagerDelegate {
     func setWeather(weather: WeatherModel) {
         
@@ -81,6 +109,7 @@ extension ViewController: WeatherManagerDelegate {
     }
 }
 
+// MARK: - delegate for UITableView
 extension ViewController: UITableViewDelegate, UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         // update after resizing
@@ -96,27 +125,47 @@ extension ViewController: UITableViewDelegate, UITableViewDataSource {
         }
         return UITableViewCell()
     }
+}
+
+// MARK: - delegate for get current location
+extension ViewController: CLLocationManagerDelegate {
     
+    // is called when CLLocation get location
+    func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
+        
+        if let location = locations.first {
+            
+            // get city name with coordination info and update city label as completionTask.
+            weatherManager.getCityName(for: location) { city in
+                self.setCityLabel(as: city)
+            }
+            weatherManager.fetchDataWithCoordi(with: location.coordinate)
+        }
+    }
+    
+    func locationManager(_ manager: CLLocationManager, didFailWithError error: Error) {
+        print("DEBUG: fail to get current location with error")
+        print("DEBUG: \(error.localizedDescription)")
+    }
     
 }
 
+// MARK: - delegate for textfield
 extension ViewController: UITextFieldDelegate {
     
     // when click return in keyboard
     func textFieldShouldReturn(_ textField: UITextField) -> Bool {
         
-        guard let city = textField.text else {
+        if textField.text?.isEmpty ?? true {
             print("DEBUG: no text in textfield")
-            return true
+        } else {
+            if let city = cityTextField.text {
+                self.fetchWeatherAndSet(with: city)
+                
+                cityTextField.text = ""
+                cityTextField.resignFirstResponder()
+            }
         }
-        manager.fetchData(city)
-
-        textField.text = ""
-        textField.resignFirstResponder()
-        
-        // set location label
-        self.locationLabel.text = city
-        
         return true
     }
 }

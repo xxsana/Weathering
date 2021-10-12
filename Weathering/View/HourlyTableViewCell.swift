@@ -15,9 +15,9 @@ class HourlyTableViewCell: UITableViewCell {
    
     func setWeather(index: Int, with weather: WeatherDetail) {
         self.backgroundColor = UIColor.clear
-        hourLabel.text = "+ \(index)hour"
+
+        hourLabel.text = "\(weather.time):00"
         conditionImageView.image = UIImage(systemName: weather.condition)
         temperatureLabel.text = "\(weather.temp)℃"
     }
-
 }
